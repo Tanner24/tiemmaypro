@@ -258,6 +258,7 @@ async function _loadFromLocalDB() {
     ATT.staff = _parseStaff(await tdb.staff.toArray());
     ATT.logs = _parseAttendance(await tdb.attendance.toArray());
     _syncNextIds();
+    if (typeof updateSidebarBadges === 'function') updateSidebarBadges();
 }
 
 

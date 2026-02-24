@@ -167,6 +167,29 @@ function stars(r) {
   return '⭐'.repeat(r) + '☆'.repeat(5 - r);
 }
 
+function updateSidebarBadges(lowStock, customers, activeOrders) {
+  // Nếu không truyền tham số, tự tính toán từ DB
+  const lStock = (lowStock !== undefined) ? lowStock : DB.inventory.filter(i => i.status !== 'Đủ hàng').length;
+  const cCount = (customers !== undefined) ? customers : DB.customers.length;
+  const aOrders = (activeOrders !== undefined) ? activeOrders : DB.orders.filter(o => o.status !== 'Hoàn thành').length;
+
+  const setB = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val;
+    el.style.display = val > 0 ? '' : 'none';
+  };
+  setB('badge-inventory', lStock);
+  setB('badge-customers', cCount);
+  setB('badge-orders', aOrders);
+
+  // Chấm công (nv đi muộn hoặc vắng hôm nay nểu cần, tạm thời để trống hoặc tính từ ATT)
+  if (typeof ATT !== 'undefined' && ATT.staff) {
+    const active = ATT.staff.filter(s => s.status === 'active').length;
+    setB('badge-attendance', active); // Ví dụ: hiện tổng NV đang làm việc
+  }
+}
+
 // ─── DASHBOARD ──────────────────────────────────────────────
 function renderDashboard() {
   const completedOrders = DB.orders.filter(o => o.status === 'Hoàn thành');
@@ -180,14 +203,7 @@ function renderDashboard() {
   document.getElementById('stat-lowstock').textContent = lowStock;
 
   // Badges
-  const setB = (id, val) => {
-    const el = document.getElementById(id);
-    el.textContent = val;
-    el.style.display = val > 0 ? '' : 'none';
-  };
-  setB('badge-inventory', lowStock);
-  setB('badge-customers', DB.customers.length);
-  setB('badge-orders', activeOrders);
+  updateSidebarBadges(lowStock, DB.customers.length, activeOrders);
 
   // Pipeline
   const pipeMap = {
