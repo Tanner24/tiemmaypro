@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TiệmMay Pro — Hệ thống Quản Lý Sản Xuất Toàn Diện</title>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' unpkg.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com https://fonts.googleapis.com; font-src 'self' fonts.gstatic.com https://fonts.gstatic.com; img-src 'self' data: lh3.googleusercontent.com; connect-src 'self' script.google.com script.googleusercontent.com;">
+    <meta name="description"
+        content="Phần mềm quản lý tiệm may toàn diện: quản lý kho vải, khách hàng, đơn hàng may đo, kiểm soát chất lượng và báo cáo doanh thu." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">✂</div>
+            <div class="brand-text">
+                <span class="brand-name">TiệmMay<span class="brand-pro">Pro</span></span>
+                <span class="brand-tagline">Quản lý chuyên nghiệp</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Tổng quan</div>
+            <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+                <span class="nav-icon">📊</span><span class="nav-label">Bảng điều khiển</span>
+            </a>
+
+            <div class="nav-section-label">Quy trình</div>
+            <a class="nav-item" data-page="inventory" onclick="navigate('inventory')">
+                <span class="nav-icon">🧵</span><span class="nav-label">Kho Nguyên phụ liệu</span>
+                <span class="nav-badge" id="badge-inventory">0</span>
+            </a>
+            <a class="nav-item" data-page="customers" onclick="navigate('customers')">
+                <span class="nav-icon">👗</span><span class="nav-label">Khách hàng & Số đo</span>
+                <span class="nav-badge" id="badge-customers">0</span>
+            </a>
+            <a class="nav-item" data-page="orders" onclick="navigate('orders')">
+                <span class="nav-icon">📋</span><span class="nav-label">Đơn hàng Sản xuất</span>
+                <span class="nav-badge" id="badge-orders">0</span>
+            </a>
+            <a class="nav-item" data-page="qc" onclick="navigate('qc')">
+                <span class="nav-icon">✅</span><span class="nav-label">Kiểm soát Chất lượng</span>
+            </a>
+            <a class="nav-item" data-page="delivery" onclick="navigate('delivery')">
+                <span class="nav-icon">🛍</span><span class="nav-label">Giao hàng & Thanh toán</span>
+            </a>
+
+            <div class="nav-section-label">Nhân sự</div>
+            <a class="nav-item" data-page="attendance" onclick="navigate('attendance')">
+                <span class="nav-icon">👷</span><span class="nav-label">Chấm công Thợ may</span>
+                <span class="nav-badge" id="badge-attendance"></span>
+            </a>
+
+            <div class="nav-section-label">Phân tích</div>
+            <a class="nav-item" data-page="reports" onclick="navigate('reports')">
+                <span class="nav-icon">📈</span><span class="nav-label">Báo cáo Doanh thu</span>
+            </a>
+            <a class="nav-item" data-page="suppliers" onclick="navigate('suppliers')">
+                <span class="nav-icon">🏭</span><span class="nav-label">Nhà cung cấp</span>
+            </a>
+
+            <div class="nav-section-label">Hệ thống</div>
+            <a class="nav-item" data-page="settings" onclick="navigate('settings')">
+                <span class="nav-icon">⚙️</span><span class="nav-label">Cài đặt</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info" style="cursor:pointer" onclick="navigate('settings')" title="Cài đặt tài khoản">
+                <div class="user-avatar" id="sidebar-avatar">A</div>
+                <div>
+                    <div class="user-name" id="sidebar-shop-name">Admin</div>
+                    <div class="user-role" id="sidebar-shop-role">Chủ tiệm</div>
+                </div>
+                <span style="margin-left:auto;color:var(--text-muted);font-size:.9rem">⚙️</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content" id="mainContent">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="topbar-title" id="topbarTitle">Bảng điều khiển</div>
+            <div class="topbar-actions">
+                <button class="btn-icon" onclick="gsSyncNow()" id="gs-badge" title="Google Sheets — chưa cấu hình">📴
+                    Offline</button>
+                <button class="btn-icon" onclick="showNotifications()" title="Thông báo">🔔 <span
+                        class="notif-dot"></span></button>
+                <button class="btn-icon" onclick="navigate('settings')" title="Cài đặt">⚙️</button>
+                <div class="topbar-date" id="topbarDate"></div>
+            </div>
+        </header>
+
+        <!-- ============ PAGE: DASHBOARD ============ -->
+        <section class="page active" id="page-dashboard"></section>
+
+        <!-- ============ PAGE: INVENTORY ============ -->
+        <section class="page" id="page-inventory"></section>
+
+        <!-- ============ PAGE: CUSTOMERS ============ -->
+        <section class="page" id="page-customers"></section>
+
+        <!-- ============ PAGE: ORDERS ============ -->
+        <section class="page" id="page-orders"></section>
+
+        <!-- ============ PAGE: QC ============ -->
+        <section class="page" id="page-qc"></section>
+
+        <!-- ============ PAGE: DELIVERY ============ -->
+        <section class="page" id="page-delivery"></section>
+
+        <!-- ============ PAGE: REPORTS ============ -->
+        <section class="page" id="page-reports"></section>
+
+        <!-- ============ PAGE: SUPPLIERS ============ -->
+        <section class="page" id="page-suppliers"></section>
+
+        <!-- ============ PAGE: ATTENDANCE ============ -->
+        <section class="page" id="page-attendance"></section>
+
+        <!-- ============ PAGE: SETTINGS ============ -->
+        <section class="page" id="page-settings"></section>
+
+    </main>
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Modules -->
+    <script src="modules/modal-add-inventory.js"></script>
+    <script src="modules/modal-add-customer.js"></script>
+    <script src="modules/modal-add-order.js"></script>
+    <script src="modules/modal-add-staff.js"></script>
+    <script src="modules/printer.js"></script>
+    <script src="modules/dashboard.js"></script>
+    <script src="modules/inventory.js"></script>
+    <script src="modules/customers.js"></script>
+    <script src="modules/orders.js"></script>
+    <script src="modules/qc.js"></script>
+    <script src="modules/delivery.js"></script>
+    <script src="modules/reports.js"></script>
+    <script src="modules/suppliers.js"></script>
+    <script src="modules/attendance.js"></script>
+    <script src="modules/settings.js"></script>
+    <!-- Core Scripts -->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+    <script src="attendance.js"></script>
+    <script src="settings.js"></script>
+</body>
+
+</html>

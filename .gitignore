@@ -1,0 +1,10 @@
+# Temporary and build files
+temp_symbigate/
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Workspace settings
+.vscode/
+.idea/
