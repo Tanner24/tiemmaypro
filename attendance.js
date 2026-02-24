@@ -365,33 +365,84 @@ function exportMonthly() {
 }
 
 // ─── CHECK-IN / CHECK-OUT ────────────────────────────────────
+let currentAttFaceMode = 'in'; // default to 'in' as requested by user's context
+
+function setAttFaceMode(mode) {
+    currentAttFaceMode = mode;
+    const cfg = {
+        'in': { id: 'f-mode-in', bg: 'rgba(61,220,132,0.1)', color: '#3ddc84' },
+        'out': { id: 'f-mode-out', bg: 'rgba(63,156,248,0.1)', color: '#7ac6fb' },
+        'auto': { id: 'f-mode-auto', bg: 'rgba(124,106,248,0.1)', color: '#7c6af8' }
+    };
+
+    ['f-mode-in', 'f-mode-out', 'f-mode-auto'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('active');
+        el.style.background = 'transparent';
+        el.style.color = 'var(--text-muted)';
+    });
+
+    const active = document.getElementById(cfg[mode].id);
+    if (active) {
+        active.classList.add('active');
+        active.style.background = cfg[mode].bg;
+        active.style.color = cfg[mode].color;
+    }
+}
+
 function _nowHHMM() {
     const n = new Date();
     return `${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')}`;
 }
 
-function doCheckIn(staffId, method, note = '') {
+function doCheckIn(staffId, method, note = '', forceType = null) {
     const staff = ATT.staff.find(s => s.id === staffId);
     if (!staff) { showToast('Không tìm thấy nhân viên!', 'error'); return; }
 
     const now = _nowHHMM();
     let existLog = ATT.logs.find(l => l.staffId === staffId && l.date === TODAY);
 
-    if (existLog) {
-        if (existLog.checkIn && !existLog.checkOut) {
-            // → Check-out
-            const [ih, im] = existLog.checkIn.split(':').map(Number);
-            const [oh, om] = now.split(':').map(Number);
-            const hrs = parseFloat(((oh * 60 + om - ih * 60 - im) / 60).toFixed(2));
-            existLog.checkOut = now;
-            existLog.totalHours = hrs;
-            _showCheckResult(staff, 'out', now, hrs);
-            if (typeof DB !== 'undefined') DB.activities.unshift({ text: `${staff.name} ra ca lúc ${now}`, time: 'Vừa xong', color: '#3f9cf8' });
-        } else if (existLog.checkOut) {
-            showToast(`${staff.name} đã chấm công đủ hôm nay! ✅`, 'info'); return;
+    // Determine action based on forceType or automatic detection
+    let action = '';
+    if (forceType === 'in') {
+        if (existLog && existLog.checkIn) {
+            showToast(`${staff.name} đã vào ca lúc ${existLog.checkIn} rồi!`, 'info');
+            return;
         }
+        action = 'in';
+    } else if (forceType === 'out') {
+        if (!existLog || !existLog.checkIn) {
+            showToast(`${staff.name} chưa vào ca hôm nay, không thể ra ca!`, 'error');
+            return;
+        }
+        if (existLog.checkOut) {
+            showToast(`${staff.name} đã ra ca lúc ${existLog.checkOut} rồi!`, 'info');
+            return;
+        }
+        action = 'out';
     } else {
-        // → Check-in
+        // Automatic detection
+        if (existLog) {
+            if (existLog.checkIn && !existLog.checkOut) action = 'out';
+            else if (existLog.checkOut) {
+                showToast(`${staff.name} đã chấm công đủ hôm nay! ✅`, 'info');
+                return;
+            }
+        } else {
+            action = 'in';
+        }
+    }
+
+    if (action === 'out') {
+        const [ih, im] = existLog.checkIn.split(':').map(Number);
+        const [oh, om] = now.split(':').map(Number);
+        const hrs = parseFloat(((oh * 60 + om - ih * 60 - im) / 60).toFixed(2));
+        existLog.checkOut = now;
+        existLog.totalHours = hrs;
+        _showCheckResult(staff, 'out', now, hrs);
+        if (typeof DB !== 'undefined') DB.activities.unshift({ text: `${staff.name} ra ca lúc ${now} (${method})`, time: 'Vừa xong', color: '#3f9cf8' });
+    } else {
         const [sh, sm] = staff.shift.split('-')[0].split(':').map(Number);
         const [nh, nm] = now.split(':').map(Number);
         const lateMin = (nh * 60 + nm) - (sh * 60 + sm);
@@ -564,7 +615,8 @@ async function startRealFaceScan() {
             if (stat) stat.innerHTML = `<span style="color:#3ddc84">✅ Đã nhận diện: ${pick.name}</span>`;
             showToast('😊 AI Nhận diện bằng khuôn mặt thành công!', 'info');
 
-            if (pick) doCheckIn(pick.id, 'Khuôn mặt');
+            const faceMode = currentAttFaceMode === 'auto' ? null : currentAttFaceMode;
+            if (pick) doCheckIn(pick.id, 'Khuôn mặt', '', faceMode);
 
             // Pause before another scan
             faceScanTimeout = setTimeout(() => {

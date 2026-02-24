@@ -1908,7 +1908,15 @@ select:focus {
   align-items: center;
   gap: 0.75rem;
   margin-top: 1.5rem;
-  width: 100%;
+}
+
+.btn-mode:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-primary) !important;
+}
+
+.btn-mode.active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* QR Scanner */

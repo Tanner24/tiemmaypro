@@ -37,6 +37,18 @@ const html_attendance = `
                     <!-- Face Panel -->
                     <div class="att-panel" id="panel-face" style="display:none">
                         <div class="face-scanner-area">
+                            <div class="att-mode-toggle" style="display:flex; gap:0.8rem; margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:0.4rem; border-radius:12px; border:1px solid var(--border);">
+                                <button class="btn-mode active" id="f-mode-in" onclick="setAttFaceMode('in')" style="flex:1; border:none; padding:0.5rem; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:700; cursor:pointer; background:rgba(61,220,132,0.1); color:#3ddc84; transition:all 0.2s;">
+                                    <span style="font-size:1.1rem">🟢</span> Vào ca
+                                </button>
+                                <button class="btn-mode" id="f-mode-out" onclick="setAttFaceMode('out')" style="flex:1; border:none; padding:0.5rem; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:700; cursor:pointer; background:transparent; color:var(--text-muted); transition:all 0.2s;">
+                                    <span style="font-size:1.1rem">🔴</span> Ra ca
+                                </button>
+                                <button class="btn-mode" id="f-mode-auto" onclick="setAttFaceMode('auto')" style="flex:1; border:none; padding:0.5rem; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:700; cursor:pointer; background:transparent; color:var(--text-muted); transition:all 0.2s;">
+                                    <span style="font-size:1.1rem">🔄</span> Tự động
+                                </button>
+                            </div>
+
                             <div class="face-camera-wrapper" style="position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center;">
                                 <video id="att-video-feed" autoplay playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; border:3px solid var(--teal); box-shadow:0 0 20px rgba(0,201,201,0.2); z-index:1;"></video>
                                 <canvas id="att-video-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:50%; display:none; z-index:2; pointer-events:none;"></canvas>
