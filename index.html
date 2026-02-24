@@ -139,12 +139,21 @@
     <!-- Toast notification -->
     <div id="toast" class="toast"></div>
 
-    <!-- Modules -->
+    <!-- Core Scripts (Load first) -->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+    <script src="attendance.js"></script>
+    <script src="settings.js"></script>
+
+    <!-- Modals & Printer -->
     <script src="modules/modal-add-inventory.js"></script>
     <script src="modules/modal-add-customer.js"></script>
     <script src="modules/modal-add-order.js"></script>
     <script src="modules/modal-add-staff.js"></script>
     <script src="modules/printer.js"></script>
+
+    <!-- UI Modules -->
     <script src="modules/dashboard.js"></script>
     <script src="modules/inventory.js"></script>
     <script src="modules/customers.js"></script>
@@ -155,12 +164,6 @@
     <script src="modules/suppliers.js"></script>
     <script src="modules/attendance.js"></script>
     <script src="modules/settings.js"></script>
-    <!-- Core Scripts -->
-    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-    <script src="db.js"></script>
-    <script src="app.js"></script>
-    <script src="attendance.js"></script>
-    <script src="settings.js"></script>
 </body>
 
 </html>
